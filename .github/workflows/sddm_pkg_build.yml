@@ -51,7 +51,7 @@ jobs:
     - name: Generate Debian package
       run: |
         cd /tmp/pkg_build/
-        /tmp/pkg_build_scripts/deb/create_unsigned_debian_pkg.sh sddm@all "Arijit Bhowmick" root
+        /tmp/pkg_build/pkg_build_scripts/deb/create_unsigned_debian_pkg.sh sddm@all "Arijit Bhowmick" root
 
     - name: Get NEW Branch name
       run: |
