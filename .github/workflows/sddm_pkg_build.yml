@@ -71,6 +71,8 @@ jobs:
 
     - name: Commit and push changes
       run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git add .
         git commit -m "[Automation] SDDM ${branch_name} PKGS Update | No.${{ github.run_number }}"
         git push origin "${branch_name}"
