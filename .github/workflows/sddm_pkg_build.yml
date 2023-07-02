@@ -56,7 +56,7 @@ jobs:
     - name: Get NEW Branch name
       run: |
         cd /tmp/pkg_build/
-        branch_name=$(./pkg_build_scripts/deb/get_pkg_BUILD_version.sh BUILD_sddm/BUILD/)
+        branch_name="$(./pkg_build_scripts/deb/get_pkg_BUILD_version.sh BUILD_sddm/BUILD/)"
         echo "branch_name=$branch_name" >> $GITHUB_ENV
 
     - name: Upload package artifacts
@@ -67,10 +67,10 @@ jobs:
 
     - name: Create branch and checkout
       run: |
-        git checkout -b "${{ env.get_branch_name }}"
+        git checkout -b "${branch_name}"
 
     - name: Commit and push changes
       run: |
         git add .
-        git commit -m "[Automation] SDDM ${{ env.get_branch_name }} PKGS Update | No.${{ github.run_number }}"
-        git push origin "${{ env.get_branch_name }}"
+        git commit -m "[Automation] SDDM ${branch_name} PKGS Update | No.${{ github.run_number }}"
+        git push origin "${branch_name}"
