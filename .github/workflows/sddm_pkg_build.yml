@@ -67,10 +67,10 @@ jobs:
 
     - name: Create branch and checkout
       run: |
-        git checkout -b ${{ env.get_branch_name }}
+        git checkout -b "${{ env.get_branch_name }}"
 
     - name: Commit and push changes
       run: |
         git add .
         git commit -m "[Automation] SDDM ${{ env.get_branch_name }} PKGS Update | No.${{ github.run_number }}"
-        git push origin ${{ env.get_branch_name }}
+        git push origin "${{ env.get_branch_name }}"
