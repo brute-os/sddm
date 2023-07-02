@@ -57,7 +57,7 @@ jobs:
       run: |
         cd /tmp/pkg_build/
         branch_name=$(./pkg_build_scripts/deb/get_pkg_BUILD_version.sh BUILD_sddm/BUILD/)
-        echo "::set-output name=branch_name::$branch_name"
+        echo "branch_name=$branch_name" >> $GITHUB_ENV
 
     - name: Upload package artifacts
       uses: actions/upload-artifact@v2
@@ -67,10 +67,10 @@ jobs:
 
     - name: Create branch and checkout
       run: |
-        git checkout -b ${{ steps.get_branch_name.outputs.branch_name }}
+        git checkout -b ${{ env.get_branch_name }}
 
     - name: Commit and push changes
       run: |
         git add .
-        git commit -m "[Automation] SDDM ${branch_name} PKGS Update | No.${{ github.run_number }}"
-        git push origin ${{ steps.get_branch_name.outputs.branch_name }}
+        git commit -m "[Automation] SDDM ${{ env.get_branch_name }} PKGS Update | No.${{ github.run_number }}"
+        git push origin ${{ env.get_branch_name }}
