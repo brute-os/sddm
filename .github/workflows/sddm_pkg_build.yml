@@ -1,0 +1,76 @@
+name: Brute OS SDDM & SDDM-Theme PKG BUILD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+             git \
+             build-essential \
+             devscripts \
+             debhelper \
+             cmake \
+             debhelper-compat \
+             extra-cmake-modules \
+             libpam0g-dev \
+             libsystemd-dev \
+             libupower-glib-dev \
+             libxcb-xkb-dev \
+             libxcb1-dev \
+             libxkbcommon-dev \
+             pkg-config \
+             python3-docutils \
+             qtbase5-dev \
+             qtdeclarative5-dev \
+             qttools5-dev \
+             qttools5-dev-tools \
+             systemd
+
+    - name: Create Directory and pull source repository
+      run: |
+         mkdir -p /tmp/pkg_build/
+         cd /tmp/pkg_build/
+         git clone https://github.com/sys41x4/pkg_build_scripts.git
+         git clone https://gitlab.com/brute-os/packages/sddm.git
+         cd sddm
+         git checkout main
+    # Copy your files into the sddm directory
+
+    - name: Generate Debian package
+      run: |
+        cd /tmp/pkg_build/
+        /tmp/pkg_build_scripts/deb/create_unsigned_debian_pkg.sh sddm@all "Arijit Bhowmick" root
+
+    - name: Get NEW Branch name
+      run: |
+        cd /tmp/pkg_build/
+        branch_name=$(./pkg_build_scripts/deb/get_pkg_BUILD_version.sh BUILD_sddm/BUILD/)
+        echo "::set-output name=branch_name::$branch_name"
+
+    - name: Upload package artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: sddm
+        path: /tmp/pkg_build/BUILD_sddm/
+
+    - name: Create branch and checkout
+      run: |
+        git checkout -b ${{ steps.get_branch_name.outputs.branch_name }}
+
+    - name: Commit and push changes
+      run: |
+        git add .
+        git commit -m "[Automation] SDDM ${branch_name} PKGS Update | No.${{ github.run_number }}"
+        git push origin ${{ steps.get_branch_name.outputs.branch_name }}
