@@ -40,7 +40,7 @@ jobs:
 
     - name: Create Directory and pull source repository
       run: |
-         mkdir -p /tmp/pkg_build/
+         mkdir -p /tmp/pkg_build/pkg/
          cd /tmp/pkg_build/
          git clone https://github.com/sys41x4/pkg_build_scripts.git
          git clone https://gitlab.com/brute-os/packages/sddm.git
@@ -52,27 +52,10 @@ jobs:
       run: |
         cd /tmp/pkg_build/
         /tmp/pkg_build/pkg_build_scripts/deb/create_unsigned_debian_pkg.sh sddm@all "Arijit Bhowmick" root
-
-    - name: Get NEW Branch name
-      run: |
-        cd /tmp/pkg_build/
-        branch_name="$(./pkg_build_scripts/deb/get_pkg_BUILD_version.sh BUILD_sddm/BUILD/)"
-        echo "branch_name=$branch_name" >> $GITHUB_ENV
+        mv /tmp/pkg_build/BUILD_sddm/ /tmp/pkg_build/pkg/
 
     - name: Upload package artifacts
       uses: actions/upload-artifact@v2
       with:
         name: sddm
-        path: /tmp/pkg_build/BUILD_sddm/
-
-    - name: Create branch and checkout
-      run: |
-        git checkout -b "${branch_name}"
-
-    - name: Commit and push changes
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "[Automation] SDDM ${branch_name} PKGS Update | No.${{ github.run_number }}"
-        git push origin "${branch_name}"
+        path: /tmp/pkg_build/pkg/
